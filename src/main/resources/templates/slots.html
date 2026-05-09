@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book Appointment — HealthBook</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; min-height: 100vh; }
+
+        header {
+            background: #fff; border-bottom: 2px solid #01696f;
+            padding: 0 40px; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .brand    { font-size: 1.5rem; font-weight: 700; color: #01696f; }
+        .subtitle { font-size: 0.82rem; color: #666; margin-left: 10px; }
+        .header-right { display: flex; gap: 10px; align-items: center; }
+
+        .btn {
+            display: inline-block; padding: 8px 18px; border-radius: 6px;
+            font-size: 0.88rem; font-weight: 600; text-decoration: none;
+            cursor: pointer; border: none; transition: background 0.15s;
+        }
+        .btn-primary       { background: #01696f; color: #fff; }
+        .btn-primary:hover { background: #0c4e54; }
+        .btn-outline       { background: #fff; color: #01696f; border: 2px solid #01696f; }
+        .btn-outline:hover { background: #e8f5f5; }
+        .btn-danger        { background: #c0392b; color: #fff; }
+        .btn-danger:hover  { background: #a93226; }
+        .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+        .content { max-width: 900px; margin: 32px auto; padding: 0 20px; }
+
+        .page-title {
+            font-size: 1.3rem; color: #01696f;
+            margin-bottom: 20px; font-weight: 700;
+        }
+
+        .error-box {
+            background: #fdecea; border: 1px solid #f5c6cb; border-radius: 6px;
+            padding: 10px 14px; color: #721c24; font-size: 0.9rem; margin-bottom: 16px;
+        }
+
+        /* ── Provider filter ── */
+        .filter-bar {
+            background: #fff; border: 1px solid #dde3e8; border-radius: 10px;
+            padding: 18px 20px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .filter-bar label { font-weight: 600; font-size: 0.9rem; color: #444; }
+        .filter-bar select {
+            padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px;
+            font-size: 0.9rem; min-width: 200px; cursor: pointer;
+        }
+        .filter-bar select:focus { outline: none; border-color: #01696f; }
+
+        /* ── Calendar grid ── */
+        .calendar-section {
+            background: #fff; border: 1px solid #dde3e8; border-radius: 10px;
+            padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .calendar-section h3 {
+            font-size: 1rem; color: #01696f; margin-bottom: 18px;
+            padding-bottom: 8px; border-bottom: 2px solid #e0f0f0;
+        }
+
+        /* Group slots by date */
+        .date-group { margin-bottom: 24px; }
+        .date-label {
+            font-size: 0.85rem; font-weight: 700; color: #555;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 10px; padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .slot-chips {
+            display: flex; flex-wrap: wrap; gap: 10px;
+        }
+        .slot-chip {
+            display: flex; flex-direction: column; align-items: center;
+            background: #e8f5f5; border: 2px solid #b2d8d8;
+            border-radius: 8px; padding: 10px 16px;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+            min-width: 110px;
+        }
+        .slot-chip:hover {
+            background: #01696f; border-color: #01696f; color: #fff;
+        }
+        .slot-chip:hover .chip-time,
+        .slot-chip:hover .chip-provider { color: #fff; }
+
+        .chip-time {
+            font-size: 0.95rem; font-weight: 700; color: #01696f; margin-bottom: 2px;
+        }
+        .chip-provider {
+            font-size: 0.75rem; color: #555;
+        }
+
+        .empty-state {
+            text-align: center; color: #888; padding: 32px;
+            font-size: 0.95rem;
+        }
+        .empty-state a { color: #01696f; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:baseline; gap:8px;">
+        <span class="brand">HealthBook</span>
+        <span class="subtitle">Medical Office Online Scheduling System</span>
+    </div>
+    <div class="header-right">
+        <a class="btn btn-outline btn-sm" th:href="@{/dashboard}">← Dashboard</a>
+        <a class="btn btn-danger  btn-sm" th:href="@{/logout}">Log Out</a>
+    </div>
+</header>
+
+<div class="content">
+    <div class="page-title">📋 Book a New Appointment</div>
+
+    <div class="error-box" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Provider filter dropdown -->
+    <form class="filter-bar" method="get" th:action="@{/slots}">
+        <label for="provider">Filter by provider:</label>
+        <select id="provider" name="provider" onchange="this.form.submit()">
+            <option value="" th:selected="${selectedProvider == ''}">All Providers</option>
+            <option th:each="p : ${providers}"
+                    th:value="${p}"
+                    th:text="${p}"
+                    th:selected="${p == selectedProvider}">
+            </option>
+        </select>
+    </form>
+
+    <!-- Slot calendar -->
+    <div class="calendar-section">
+        <h3>🗓 Provider Availability — Select a Time Slot</h3>
+
+        <div th:if="${slots.isEmpty()}" class="empty-state">
+            No available slots
+            <span th:if="${selectedProvider != ''}">
+                for <strong th:text="${selectedProvider}"></strong>
+            </span>.
+            <a th:href="@{/slots}">View all providers →</a>
+        </div>
+
+        <!-- Group by date using Thymeleaf -->
+        <div th:if="${!slots.isEmpty()}">
+            <div th:each="slot, iterStat : ${slots}">
+
+                <!-- Date header: show when date changes -->
+                <div class="date-group"
+                     th:if="${iterStat.first or
+                              #temporals.format(slot.startDateTime,'yyyy-MM-dd') !=
+                              #temporals.format(slots[iterStat.index - 1].startDateTime,'yyyy-MM-dd')}">
+
+                    <div class="date-label"
+                         th:text="${#temporals.format(slot.startDateTime, 'EEEE, MMMM dd yyyy')}">
+                    </div>
+                    <div class="slot-chips">
+                        <a th:each="s : ${slots}"
+                           th:if="${#temporals.format(s.startDateTime,'yyyy-MM-dd') ==
+                                   #temporals.format(slot.startDateTime,'yyyy-MM-dd')}"
+                           class="slot-chip"
+                           th:href="@{/book/review(slotId=${s.id})}">
+                            <span class="chip-time"
+                                  th:text="${#temporals.format(s.startDateTime,'hh:mm a')}">
+                            </span>
+                            <span class="chip-provider" th:text="${s.providerName}"></span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

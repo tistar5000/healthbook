@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>HealthBook — Medical Office Scheduling</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        /*  Header  */
+        header {
+            background: #fff;
+            border-bottom: 2px solid #01696f;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        header .brand { font-size: 1.6rem; font-weight: 700; color: #01696f; }
+        header .subtitle { font-size: 0.85rem; color: #666; margin-left: 12px; }
+        header .auth-btns { display: flex; gap: 10px; }
+        .btn {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s;
+        }
+        .btn-primary   { background: #01696f; color: #fff; }
+        .btn-primary:hover { background: #0c4e54; }
+        .btn-outline   { background: #fff; color: #01696f; border: 2px solid #01696f; }
+        .btn-outline:hover { background: #e8f5f5; }
+        .btn-danger    { background: #c0392b; color: #fff; }
+        .btn-danger:hover { background: #a93226; }
+
+        /*  Hero  */
+        .hero {
+            background: linear-gradient(135deg, #01696f 0%, #0c4e54 100%);
+            color: #fff;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.4rem; margin-bottom: 10px; }
+        .hero p  { font-size: 1.1rem; opacity: 0.9; margin-bottom: 28px; }
+        .hero .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn-white { background: #fff; color: #01696f; font-weight: 700; }
+        .btn-white:hover { background: #e8f5f5; }
+        .btn-white-outline {
+            background: transparent; color: #fff;
+            border: 2px solid #fff; font-weight: 600;
+        }
+        .btn-white-outline:hover { background: rgba(255,255,255,0.15); }
+
+        /*  Content grid  */
+        .content { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #dde3e8;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            color: #01696f;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0f0f0;
+        }
+        .card ul { list-style: none; padding: 0; }
+        .card ul li {
+            padding: 5px 0;
+            font-size: 0.95rem;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .card ul li:last-child { border-bottom: none; }
+        .card ul li strong { color: #222; }
+
+        /* ── Full-width cards ── */
+        .card-full { margin-bottom: 24px; }
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .provider-chip {
+            background: #e8f5f5;
+            border: 1px solid #b2d8d8;
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+        .provider-chip .name  { font-weight: 700; color: #01696f; font-size: 0.95rem; }
+        .provider-chip .spec  { font-size: 0.82rem; color: #555; margin-top: 2px; }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #888;
+            font-size: 0.85rem;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:baseline; gap:8px;">
+        <span class="brand">HealthBook</span>
+        <span class="subtitle">Medical Office Online Scheduling System</span>
+    </div>
+    <div class="auth-btns">
+        <a class="btn btn-outline" th:href="@{/login}">Log In</a>
+        <a class="btn btn-primary" th:href="@{/register}">Register</a>
+    </div>
+</header>
+
+<div class="hero">
+    <h1>Your Health, Scheduled Simply</h1>
+    <p>Book appointments with your provider online. Anytime. Anywhere.</p>
+    <div class="hero-btns">
+        <a class="btn btn-white" th:href="@{/register}">Get Started</a>
+        <a class="btn btn-white-outline" th:href="@{/login}">Sign In</a>
+    </div>
+</div>
+
+<div class="content">
+
+    <!-- Office Info + Hours -->
+    <div class="grid-3">
+        <div class="card">
+            <h2>📍 Office Information</h2>
+            <ul>
+                <li><strong>Name:</strong> Some Medical Center</li>
+                <li><strong>Address:</strong> 1 Washington Sq, San Jose, CA 95192</li>
+                <li><strong>Phone:</strong> (408) 924-1530</li>
+                <li><strong>Email:</strong> contact@healthbook.clinic</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🕐 Hours of Operation</h2>
+            <ul>
+                <li><strong>Monday – Friday:</strong> 8:00 AM – 6:00 PM</li>
+                <li><strong>Saturday:</strong> 9:00 AM – 2:00 PM</li>
+                <li><strong>Sunday:</strong> Closed</li>
+                <li><strong>Holidays:</strong> Closed</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🏥 Available Services</h2>
+            <ul>
+                <li>General Practice &amp; Primary Care</li>
+                <li>Preventive Health Screenings</li>
+                <li>Chronic Disease Management</li>
+                <li>Pediatric Care</li>
+                <li>Lab Work &amp; Diagnostics</li>
+                <li>Follow-up Consultations</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Med Personnel cards -->
+    <div class="card card-full">
+        <h2>👨‍⚕️ Our Medical Personnel</h2>
+        <div class="provider-grid">
+            <div class="provider-chip">
+                <div class="name">Dr. Stark</div>
+                <div class="spec">General Practice</div>
+            </div>
+            <div class="provider-chip">
+                <div class="name">Dr. Parker</div>
+                <div class="spec">Internal Medicine</div>
+            </div>
+            <div class="provider-chip">
+                <div class="name">Dr. Romanova</div>
+                <div class="spec">Pediatrics</div>
+            </div>
+            <div class="provider-chip">
+                <div class="name">Dr. Banner</div>
+                <div class="spec">Chronic Disease Mgmt</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    &copy; 2026 HealthBook &mdash; Some Medical Center &mdash; All rights reserved. jk lol
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Account Settings — HealthBook</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; min-height: 100vh; }
+        header {
+            background: #fff; border-bottom: 2px solid #01696f;
+            padding: 0 40px; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .brand    { font-size: 1.5rem; font-weight: 700; color: #01696f; }
+        .subtitle { font-size: 0.82rem; color: #666; margin-left: 10px; }
+        .header-right { display: flex; gap: 10px; align-items: center; }
+        .btn {
+            display: inline-block; padding: 8px 18px; border-radius: 6px;
+            font-size: 0.88rem; font-weight: 600; text-decoration: none;
+            cursor: pointer; border: none; transition: background 0.15s;
+        }
+        .btn-primary       { background: #01696f; color: #fff; }
+        .btn-primary:hover { background: #0c4e54; }
+        .btn-outline       { background: #fff; color: #01696f; border: 2px solid #01696f; }
+        .btn-outline:hover { background: #e8f5f5; }
+        .btn-danger        { background: #c0392b; color: #fff; }
+        .btn-danger:hover  { background: #a93226; }
+        .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+        .page-center {
+            display: flex; justify-content: center; align-items: center;
+            padding: 80px 20px;
+        }
+        .stub-card {
+            background: #fff; border: 1px solid #dde3e8; border-radius: 12px;
+            padding: 48px 40px; max-width: 480px; width: 100%;
+            text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .stub-icon { font-size: 3rem; margin-bottom: 16px; }
+        .stub-card h2 { color: #01696f; font-size: 1.3rem; margin-bottom: 10px; }
+        .stub-card p  { color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px; }
+        .user-badge {
+            display: inline-block; background: #e8f5f5; border: 1px solid #b2d8d8;
+            border-radius: 20px; padding: 6px 18px; font-weight: 600;
+            color: #01696f; font-size: 0.95rem; margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:baseline; gap:8px;">
+        <span class="brand">HealthBook</span>
+        <span class="subtitle">Medical Office Online Scheduling System</span>
+    </div>
+    <div class="header-right">
+        <a class="btn btn-outline btn-sm" th:href="@{/dashboard}">← Dashboard</a>
+        <a class="btn btn-danger  btn-sm" th:href="@{/logout}">Log Out</a>
+    </div>
+</header>
+
+<div class="page-center">
+    <div class="stub-card">
+        <div class="stub-icon">⚙️</div>
+        <h2>Account Settings</h2>
+        <p>Logged in as</p>
+        <div class="user-badge" th:text="${userName}"></div>
+        <p style="margin-bottom:28px;">
+            Account management features (change password, update email, notification
+            preferences) are coming in a future update! (jk)
+        </p>
+        <a class="btn btn-primary" th:href="@{/dashboard}">← Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>

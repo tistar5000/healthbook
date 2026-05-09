@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Booking Confirmed — HealthBook</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #222; min-height: 100vh; }
+
+        header {
+            background: #fff; border-bottom: 2px solid #01696f;
+            padding: 0 40px; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .brand    { font-size: 1.5rem; font-weight: 700; color: #01696f; }
+        .subtitle { font-size: 0.82rem; color: #666; margin-left: 10px; }
+        .header-right { display: flex; gap: 10px; align-items: center; }
+
+        .btn {
+            display: inline-block; padding: 8px 18px; border-radius: 6px;
+            font-size: 0.88rem; font-weight: 600; text-decoration: none;
+            cursor: pointer; border: none; transition: background 0.15s;
+        }
+        .btn-primary       { background: #01696f; color: #fff; }
+        .btn-primary:hover { background: #0c4e54; }
+        .btn-outline       { background: #fff; color: #01696f; border: 2px solid #01696f; }
+        .btn-outline:hover { background: #e8f5f5; }
+        .btn-danger        { background: #c0392b; color: #fff; }
+        .btn-danger:hover  { background: #a93226; }
+        .btn-sm  { padding: 6px 14px; font-size: 0.82rem; }
+        .btn-block { display: block; width: 100%; text-align: center; padding: 12px; font-size: 0.95rem; }
+
+        .page-center {
+            display: flex; justify-content: center;
+            padding: 48px 20px;
+        }
+        .confirm-card {
+            background: #fff; border: 1px solid #dde3e8; border-radius: 12px;
+            padding: 40px; width: 100%; max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        /* ── Success badge ── */
+        .success-icon {
+            width: 64px; height: 64px; background: #e8f5f5;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 20px;
+            font-size: 2rem;
+        }
+        .success-title {
+            font-size: 1.4rem; font-weight: 700; color: #01696f; margin-bottom: 6px;
+        }
+        .success-subtitle {
+            font-size: 0.95rem; color: #555; margin-bottom: 32px;
+        }
+        .success-subtitle strong { color: #01696f; }
+
+        /* ── Details box ── */
+        .details-box {
+            background: #f0f8f8; border: 1px solid #b2d8d8;
+            border-radius: 10px; padding: 20px 24px;
+            text-align: left; margin-bottom: 28px;
+        }
+        .details-box h3 {
+            font-size: 0.88rem; font-weight: 700; color: #01696f;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+        .detail-row {
+            display: flex; justify-content: space-between;
+            padding: 8px 0; border-bottom: 1px solid #d4ecec;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 0.82rem; color: #777; }
+        .detail-value { font-size: 0.9rem; font-weight: 600; color: #222; text-align: right; }
+
+        /* ── Actions ── */
+        .actions { display: flex; flex-direction: column; gap: 12px; }
+        .actions .btn-outline-danger {
+            display: block; width: 100%; text-align: center; padding: 11px;
+            font-size: 0.95rem; font-weight: 600; border-radius: 6px;
+            border: 2px solid #c0392b; color: #c0392b;
+            background: #fff; cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            text-decoration: none;
+        }
+        .actions .btn-outline-danger:hover { background: #fdecea; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:baseline; gap:8px;">
+        <span class="brand">HealthBook</span>
+        <span class="subtitle">Medical Office Online Scheduling System</span>
+    </div>
+    <div class="header-right">
+        <a class="btn btn-danger btn-sm" th:href="@{/logout}">Log Out</a>
+    </div>
+</header>
+
+<div class="page-center">
+    <div class="confirm-card">
+
+        <!-- Success icon + message -->
+        <div class="success-icon">✅</div>
+        <div class="success-title">Appointment Confirmed!</div>
+        <div class="success-subtitle">
+            Your appointment has been successfully booked,
+            <strong th:text="${appointment.patientName}"></strong>!
+        </div>
+
+        <!-- Appointment details -->
+        <div class="details-box">
+            <h3>Your Upcoming Appointment Details</h3>
+
+            <div class="detail-row">
+                <span class="detail-label">Provider</span>
+                <span class="detail-value" th:text="${appointment.providerName}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value"
+                      th:text="${#temporals.format(appointment.appointmentStart, 'EEEE, MMMM dd yyyy')}">
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Time</span>
+                <span class="detail-value"
+                      th:text="${#temporals.format(appointment.appointmentStart, 'hh:mm a') +
+                                 ' – ' +
+                                 #temporals.format(appointment.appointmentEnd, 'hh:mm a')}">
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Office Location</span>
+                <span class="detail-value">1 Washington Sq<br/>San Jose, CA 95192</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <a class="btn btn-primary btn-block" th:href="@{/dashboard}">
+                Go to Dashboard
+            </a>
+
+            <form th:action="@{/appointments/cancel}" method="post"
+                  onsubmit="return confirm('Are you sure you want to cancel this appointment?')">
+                <input type="hidden" name="appointmentId" th:value="${appointment.id}"/>
+                <button type="submit" class="btn-outline-danger">
+                    Cancel or Make Changes
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

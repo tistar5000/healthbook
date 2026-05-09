@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Dashboard — HealthBook</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: #fff;
+            border-bottom: 2px solid #01696f;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .brand    { font-size: 1.5rem; font-weight: 700; color: #01696f; }
+        .subtitle { font-size: 0.82rem; color: #666; margin-left: 10px; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .welcome-text { font-size: 0.9rem; color: #444; }
+        .welcome-text strong { color: #01696f; }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s;
+        }
+        .btn-primary       { background: #01696f; color: #fff; }
+        .btn-primary:hover { background: #0c4e54; }
+        .btn-outline       { background: #fff; color: #01696f; border: 2px solid #01696f; }
+        .btn-outline:hover { background: #e8f5f5; }
+        .btn-danger        { background: #c0392b; color: #fff; }
+        .btn-danger:hover  { background: #a93226; }
+        .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+        /* ── Layout ── */
+        .content { max-width: 960px; margin: 32px auto; padding: 0 20px; }
+
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: #fff;
+            border: 1px solid #dde3e8;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 1.05rem;
+            color: #01696f;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0f0f0;
+        }
+
+        /* ── Upcoming appointment ── */
+        .upcoming-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .upcoming-item { }
+        .upcoming-item .label {
+            font-size: 0.78rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 3px;
+        }
+        .upcoming-item .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #222;
+        }
+        .no-upcoming {
+            color: #888;
+            font-size: 0.95rem;
+            padding: 8px 0;
+        }
+
+        /* ── Appointment history table ── */
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #01696f;
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f0f8f8; }
+        .empty-row td { color: #888; text-align: center; padding: 20px; }
+
+        /* ── Message banner ── */
+        .msg-banner {
+            background: #e8f5f5;
+            border: 1px solid #b2d8d8;
+            border-radius: 8px;
+            padding: 14px 18px;
+            color: #0c4e54;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex; align-items:baseline; gap:8px;">
+        <span class="brand">HealthBook</span>
+        <span class="subtitle">Medical Office Online Scheduling System</span>
+    </div>
+    <div class="header-right">
+        <span class="welcome-text">Welcome back, <strong th:text="${userName}"></strong></span>
+        <a class="btn btn-outline btn-sm" th:href="@{/account}">Account Settings</a>
+        <a class="btn btn-danger  btn-sm" th:href="@{/logout}">Log Out</a>
+    </div>
+</header>
+
+<div class="content">
+
+    <!-- Action buttons -->
+    <div class="action-bar">
+        <a class="btn btn-primary" th:href="@{/slots}">Book a New Appointment</a>
+        <a class="btn btn-outline"  th:href="@{/message}">Message Your Provider</a>
+    </div>
+
+    <!-- Upcoming appointment -->
+    <div class="card">
+        <h2>📅 Your Upcoming Appointment</h2>
+
+        <div th:if="${upcoming == null}" class="no-upcoming">
+            You have no upcoming appointments.
+            <a th:href="@{/slots}" style="color:#01696f; font-weight:600;">Book one now →</a>
+        </div>
+
+        <div th:if="${upcoming != null}">
+            <div class="upcoming-grid">
+                <div class="upcoming-item">
+                    <div class="label">Provider</div>
+                    <div class="value" th:text="${upcoming.providerName}"></div>
+                </div>
+                <div class="upcoming-item">
+                    <div class="label">Date</div>
+                    <div class="value"
+                         th:text="${#temporals.format(upcoming.appointmentStart, 'MMM dd, yyyy')}">
+                    </div>
+                </div>
+                <div class="upcoming-item">
+                    <div class="label">Time</div>
+                    <div class="value"
+                         th:text="${#temporals.format(upcoming.appointmentStart, 'hh:mm a')}">
+                    </div>
+                </div>
+                <div class="upcoming-item">
+                    <div class="label">Office Location</div>
+                    <div class="value">1 Washington Sq</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment history -->
+    <div class="card">
+        <h2>🗂 Appointment History</h2>
+
+        <table th:if="${!appointments.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Provider</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appt : ${appointments}">
+                <td th:text="${appt.providerName}"></td>
+                <td th:text="${#temporals.format(appt.appointmentStart, 'MMM dd, yyyy')}"></td>
+                <td th:text="${#temporals.format(appt.appointmentStart, 'hh:mm a')}"></td>
+                <td>1 Washington Square</td>
+                <td>
+                    <form th:action="@{/appointments/cancel}" method="post"
+                          onsubmit="return confirm('Cancel this appointment?')">
+                        <input type="hidden" name="appointmentId" th:value="${appt.id}"/>
+                        <button class="btn btn-danger btn-sm" type="submit">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${appointments.isEmpty()}"
+             style="color:#888; font-size:0.95rem; padding: 8px 0;">
+            No appointment history yet.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Appointments — HealthBook</title>
+    <style>
+        body  { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #222; }
+        h1    { color: #01696f; }
+        .nav a { margin-right: 16px; color: #01696f; text-decoration: none; font-weight: bold; }
+        .nav a:hover { text-decoration: underline; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th    { background: #01696f; color: white; padding: 10px 12px; text-align: left; }
+        td    { padding: 10px 12px; border-bottom: 1px solid #ddd; }
+        tr:hover td { background: #f0f8f8; }
+        .empty { color: #777; margin-top: 24px; }
+        .btn  { display: inline-block; margin-top: 16px; background: #01696f; color: white;
+            padding: 8px 18px; border-radius: 6px; text-decoration: none; }
+        .btn:hover { background: #0c4e54; }
+    </style>
+</head>
+<body>
+<h1>HealthBook</h1>
+<nav class="nav">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/slots}">Book Appointment</a>
+    <a th:href="@{/appointments}">My Appointments</a>
+    <a th:href="@{/health}">System Health</a>
+</nav>
+<hr/>
+
+<h2>All Booked Appointments</h2>
+
+<div th:if="${appointments.isEmpty()}" class="empty">
+    <p>No appointments booked yet.</p>
+</div>
+
+<table th:if="${!appointments.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Patient</th>
+        <th>Provider</th>
+        <th>Date</th>
+        <th>Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="appt : ${appointments}">
+        <td th:text="${appt.id}"></td>
+        <td th:text="${appt.patientName}"></td>
+        <td th:text="${appt.providerName}"></td>
+        <td th:text="${#temporals.format(appt.appointmentStart, 'MMM dd, yyyy')}"></td>
+        <td th:text="${#temporals.format(appt.appointmentStart, 'hh:mm a')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<a class="btn" th:href="@{/slots}">Book Another</a>
+</body>
+</html>
