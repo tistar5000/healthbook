@@ -1,0 +1,7 @@
+spring.datasource.url=jdbc:postgresql://localhost:5432/healthbook
+spring.datasource.username=YOUR_PG_USERNAME
+spring.datasource.password=YOUR_PG_PASSWORD
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.sql.init.mode=always
+spring.sql.init.platform=postgres

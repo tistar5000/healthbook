@@ -2,6 +2,9 @@
 logs/
 *.log
 
+# Local config with real credentials
+src/main/resources/application.properties
+
 # Maven
 target/
 *.class
